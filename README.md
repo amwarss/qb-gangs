@@ -1,5 +1,7 @@
 
--- https://discord.gg/xG9FM2VjjY
+https://youtu.be/Yaf5HlOeF6k
+
+https://discord.gg/xG9FM2VjjY
 
 "# qb-gang" 
 نظام عصابات متكامل 
