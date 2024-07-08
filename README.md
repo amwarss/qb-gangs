@@ -1,9 +1,9 @@
-![ima2ge](https://github.com/amwarss/qb-gangs/assets/89148697/d3ffd919-1610-4037-9d95-56dfdb4b7e1e)
-
-
 https://youtu.be/Yaf5HlOeF6k
 
 https://discord.gg/xG9FM2VjjY
+
+![ima2ge](https://github.com/amwarss/qb-gangs/assets/89148697/d3ffd919-1610-4037-9d95-56dfdb4b7e1e)
+
 
 "# qb-gang" 
 نظام عصابات متكامل 
