@@ -1,4 +1,3 @@
-![Screenshot 2024-05-31 174007](https://github.com/amwarss/qb-gang/assets/89148697/84804950-4ef7-47b9-809b-02496db96504)
 
 -- https://discord.gg/xG9FM2VjjY
 
