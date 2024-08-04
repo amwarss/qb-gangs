@@ -1,22 +1,51 @@
 QBCore = exports['qb-core']:GetCoreObject()
 
-local function isPlayerInGang(player, gangName)
+local function isPlayerInGroup(player, groupName)
+    local playerJob = player.PlayerData.job.name
     local playerGang = player.PlayerData.gang.name
-    return playerGang == gangName
+    return playerJob == groupName or playerGang == groupName
 end
 
-QBCore.Functions.CreateCallback('gang:canOpenStash', function(source, cb)
+QBCore.Functions.CreateCallback('group:canOpenStash', function(source, cb)
     local Player = QBCore.Functions.GetPlayer(source)
-    local gangName = Player.PlayerData.gang.name
+    local jobOrGangName = Player.PlayerData.job.name or Player.PlayerData.gang.name
 
-    if Config.GangRanks[gangName] then
-        cb(isPlayerInGang(Player, gangName))
+    if Config.GroupRanks[jobOrGangName] then
+        cb(isPlayerInGroup(Player, jobOrGangName))
     else
         cb(false)
     end
 end)
 
-QBCore.Functions.CreateCallback('gang:getGangName', function(source, cb)
+QBCore.Functions.CreateCallback('group:getGroupName', function(source, cb)
     local Player = QBCore.Functions.GetPlayer(source)
-    cb(Player.PlayerData.gang.name)
+    cb(Player.PlayerData.job.name or Player.PlayerData.gang.name)
+end)
+
+RegisterNetEvent('qb-groups:server:stash', function()
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    local PlayerGroup = Player.PlayerData.gang and Player.PlayerData.gang.name or Player.PlayerData.job and Player.PlayerData.job.name
+    local PlayerType = Player.PlayerData.gang and Player.PlayerData.gang.name and 'gang' or 'job'
+
+    if PlayerGroup and Config.Stashes[PlayerGroup] then
+        local stashConfig = Config.Stashes[PlayerGroup]
+        local stashName = stashConfig.stashName or (PlayerGroup .. "stash_" .. playerData.citizenid)
+        local maxweight = stashConfig.maxweight or 4000000
+        local slots = stashConfig.slots or 500
+        exports['qb-inventory']:OpenInventory(src, stashName)
+    end
+end)
+
+RegisterNetEvent('qb-groups:server:personalStash', function()
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    local citizenid = Player.PlayerData.citizenid
+
+    if citizenid then
+        local stashName = "personalstash_" .. citizenid
+        local maxweight = 4000000 -- يمكن تغيير الوزن الأقصى هنا
+        local slots = 500 -- يمكن تغيير عدد الفتحات هنا
+        exports['qb-inventory']:OpenInventory(src, stashName)
+    end
 end)
