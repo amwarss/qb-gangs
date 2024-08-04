@@ -22,6 +22,14 @@ https://discord.gg/xG9FM2VjjY
 
 يتوافق مع نظامين ox_target and qb-target
 
+الجديد ببمكانك تنزيله من Releases 
+
+بمكانك اضافه مكان لا اخد المركبات 
+
+واصبحت بمكانك اسخدامه للوظائف والعصابات
+
+ويعمل مع الحقيبة بالاصدارات الحديثة
+
 
 Comprehensive Gang System Script
 
@@ -40,3 +48,11 @@ Clothing Exchange Storage: You can add a clothing exchange storage for gangs.
 All these features can be configured via the config file without needing to modify the client.
 
 This is compatible with both ox_target and qb-target systems.
+
+What's new is where you download it from the releases 
+
+In your place, add it, not take the vehicle 
+
+You can now use it for jobs and gangs
+
+To be able to purchase the latest version
