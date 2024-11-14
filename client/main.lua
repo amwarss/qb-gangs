@@ -1,4 +1,4 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local QBCore = exports[Config.QbCoreScriptName]:GetCoreObject()
 local Config = Config or {}
 
 local function isGroupAllowed(group, type)
@@ -53,7 +53,7 @@ RegisterNetEvent('qb-groups:client:OpenBossMenu', function()
             txt = 'Check your Employees List',
             icon = "fa-solid fa-list",
             params = {
-                event = "qb-bossmenu:client:employeelist",
+                event = Config.bossMenuScriptName .. '-bossmenu:client:employeelist',
             }
         }
         bossMenu[#bossMenu + 1] = {
@@ -61,7 +61,7 @@ RegisterNetEvent('qb-groups:client:OpenBossMenu', function()
             txt = 'Hire Nearby Civilians',
             icon = "fa-solid fa-hand-holding",
             params = {
-                event = "qb-bossmenu:client:HireMenu",
+                event = Config.bossMenuScriptName .. '-bossmenu:client:HireMenu',
             }
         }
         bossMenu[#bossMenu + 1] = {
@@ -69,7 +69,7 @@ RegisterNetEvent('qb-groups:client:OpenBossMenu', function()
             txt = 'Open Stash',
             icon = "fa-solid fa-sack-dollar",
             params = {
-                event = "qb-bossmenu:client:Stash",
+                event = Config.bossMenuScriptName .. '-bossmenu:client:Stash',
             }
         }
         bossMenu[#bossMenu + 1] = {
@@ -77,17 +77,17 @@ RegisterNetEvent('qb-groups:client:OpenBossMenu', function()
             txt = 'Check your Company Balance',
             icon = "fa-solid fa-sack-dollar",
             params = {
-                event = "qb-bossmenu:client:SocietyMenu",
+                event = Config.bossMenuScriptName .. '-bossmenu:client:SocietyMenu',
             }
         }
         bossMenu[#bossMenu + 1] = {
             header = "Close Menu",
             icon = "fa-duotone fa-circle-x",
             params = {
-                event = "qb-menu:closeMenu",
+                event = Config.MenuScriptName .. ':closeMenu',
             }
         }
-        exports['qb-menu']:openMenu(bossMenu)
+        exports[Config.MenuScriptName]:openMenu(bossMenu)
     elseif groupType == "gang" then
         gangMenu[#gangMenu + 1] = {
             header = 'Gang Management - '.. string.upper(QBCore.Functions.GetPlayerData()[groupType].grade.name),
@@ -99,7 +99,7 @@ RegisterNetEvent('qb-groups:client:OpenBossMenu', function()
             txt = 'Check your Members List',
             icon = "fa-solid fa-list",
             params = {
-                event = "qb-gangmenu:client:memberlist",
+                event =  Config.bossMenuScriptName .. '-gangmenu:client:memberlist',
             }
         }
         gangMenu[#gangMenu + 1] = {
@@ -107,7 +107,7 @@ RegisterNetEvent('qb-groups:client:OpenBossMenu', function()
             txt = 'Recruit Nearby Civilians',
             icon = "fa-solid fa-hand-holding",
             params = {
-                event = "qb-gangmenu:client:RecruitMenu",
+                event =  Config.bossMenuScriptName .. '-gangmenu:client:RecruitMenu',
             }
         }
         gangMenu[#gangMenu + 1] = {
@@ -115,7 +115,7 @@ RegisterNetEvent('qb-groups:client:OpenBossMenu', function()
             txt = 'Open Stash',
             icon = "fa-solid fa-sack-dollar",
             params = {
-                event = "qb-gangmenu:client:Stash",
+                event =  Config.bossMenuScriptName .. '-gangmenu:client:Stash',
             }
         }
         gangMenu[#gangMenu + 1] = {
@@ -123,17 +123,17 @@ RegisterNetEvent('qb-groups:client:OpenBossMenu', function()
             txt = 'Check your Gang Balance',
             icon = "fa-solid fa-sack-dollar",
             params = {
-                event = "qb-gangmenu:client:SocietyMenu",
+                event =  Config.bossMenuScriptName .. '-gangmenu:client:SocietyMenu',
             }
         }
         gangMenu[#gangMenu + 1] = {
             header = "Close Menu",
             icon = "fa-duotone fa-circle-x",
             params = {
-                event = "qb-menu:closeMenu",
+                event = Config.MenuScriptName .. ':closeMenu',
             }
         }
-        exports['qb-menu']:openMenu(gangMenu)
+        exports[Config.MenuScriptName]:openMenu(gangMenu)
     end
 end)
 -- Function to add Boss Menu Zone
@@ -176,89 +176,42 @@ local function addBossMenuZone(group, coords, type)
             },
             distance = 1.5
         })
-    elseif Config.UseTarget == "orbit" then
-        Citizen.CreateThread(function()
-            while true do
-                local playerCoords = GetEntityCoords(PlayerPedId())
-                local distance = GetDistanceBetweenCoords(playerCoords, coords.x, coords.y, coords.z, true)
-                if distance < 8 then
-                    SetDrawOrigin(coords.x, coords.y, coords.z + 1, 0)
-                    if distance > 1.5 and distance < 8 and isGroupAllowed(group, type) then
-                        DrawSprite("orbit_ui", "point", 0, 0, 0.015, 0.025, 0, 255, 255, 255, 200)
-                    elseif distance < 1.5 and isGroupAllowed(group, type) then 
-                        DrawSprite("orbit_ui", "key", 0, 0, 0.018, 0.030, 0, 255, 255, 255, 255)
-                        DrawSprite("orbit_ui", "test2", 0.044, 0, 0.06, 0.028, 0, 255, 255, 255, 255)
-                        if IsControlJustPressed(0, 38) then   
+    elseif Config.UseTarget == "interact" then
+        exports.interact:AddInteraction({
+            coords = vector3(coords.x, coords.y, coords.z),
+            distance = 8.0,
+            interactDst = 1.5,
+            id = group .. '_boss_menu',
+            name = 'OpenBossMenu',
+            groups = {
+                [group] = 0, -- ضبط المجموعة المطلوبة هنا
+            },
+            options = {
+                {
+                    label = 'Open Boss Menu',
+                    action = function(entity, coords, args)
+                        if isGroupAllowed(group, type) then
                             TriggerEvent('qb-groups:client:OpenBossMenu')
                         end
-                    end
-                    ClearDrawOrigin()
-                end
-                Wait(1)
-            end
-        end)
+                    end,
+                },
+            }
+        })
     end
 end
+
 
 if Config.UseInventory == "old" then
     function addPersonalStashZone(group, coords, type)
         if Config.UseTarget == "ox" then
             exports.ox_target:addSphereZone({
-            coords = coords,
-            radius = 1.5,
-            options = {
-                {
-                    name = group .. '_personal_stash',
-                    label = 'Open Personal Stash',
-                    onSelect = function()
-                        local playerData = QBCore.Functions.GetPlayerData()
-                        local stashName = "personalstash_" .. playerData.citizenid
-                        TriggerEvent("inventory:client:SetCurrentStash", stashName)
-                        TriggerServerEvent("inventory:server:OpenInventory", "stash", stashName, {
-                            maxweight = 50000,
-                            slots = 10,
-                        })
-                    end,
-                    canInteract = function(entity, distance, coords, name)
-                        return distance < 1.5 and isGroupAllowed(group, type)
-                    end
-                }
-            }
-        })
-    elseif Config.UseTarget == "qb" then
-        exports['qb-target']:AddBoxZone(group .. '_personal_stash', coords, 1.5, 1.5, {
-            name = group .. '_personal_stash',
-            heading = 0,
-            debugPoly = false,
-            minZ = coords.z - 1,
-            maxZ = coords.z + 1
-        }, {
-            options = {
-                {
-                    type = "client",
-                    event = "inventory:client:SetCurrentStash",
-                    icon = "fas fa-box",
-                    label = "Open Personal Stash",
-                    canInteract = function(entity, distance, coords, name)
-                        return distance < 1.5 and isGroupAllowed(group, type)
-                    end
-                }
-            },
-            distance = 1.5
-        })
-    elseif Config.UseTarget == "orbit" then
-        Citizen.CreateThread(function()
-            while true do
-                local playerCoords = GetEntityCoords(PlayerPedId())
-                local distance = GetDistanceBetweenCoords(playerCoords, coords.x, coords.y, coords.z, true)
-                if distance < 8 then
-                    SetDrawOrigin(coords.x, coords.y, coords.z + 1, 0)
-                    if distance > 1.5 and distance < 8 and isGroupAllowed(group, type) then
-                        DrawSprite("orbit_ui", "point", 0, 0, 0.015, 0.025, 0, 255, 255, 255, 200)
-                    elseif distance < 1.5 and isGroupAllowed(group, type) then 
-                        DrawSprite("orbit_ui", "key", 0, 0, 0.018, 0.030, 0, 255, 255, 255, 255)
-                        DrawSprite("orbit_ui", "personalstash", 0.044, 0, 0.06, 0.028, 0, 255, 255, 255, 255)
-                        if IsControlJustPressed(0, 38) then   
+                coords = coords,
+                radius = 1.5,
+                options = {
+                    {
+                        name = group .. '_personal_stash',
+                        label = 'Open Personal Stash',
+                        onSelect = function()
                             local playerData = QBCore.Functions.GetPlayerData()
                             local stashName = "personalstash_" .. playerData.citizenid
                             TriggerEvent("inventory:client:SetCurrentStash", stashName)
@@ -266,13 +219,61 @@ if Config.UseInventory == "old" then
                                 maxweight = 50000,
                                 slots = 10,
                             })
+                        end,
+                        canInteract = function(entity, distance, coords, name)
+                            return distance < 1.5 and isGroupAllowed(group, type)
                         end
-                    end
-                       ClearDrawOrigin()
-                    end
-                    Wait(1)
-                end
-            end)
+                    }
+                }
+            })
+        elseif Config.UseTarget == "qb" then
+            exports['qb-target']:AddBoxZone(group .. '_personal_stash', coords, 1.5, 1.5, {
+                name = group .. '_personal_stash',
+                heading = 0,
+                debugPoly = false,
+                minZ = coords.z - 1,
+                maxZ = coords.z + 1
+            }, {
+                options = {
+                    {
+                        type = "client",
+                        event = "inventory:client:SetCurrentStash",
+                        icon = "fas fa-box",
+                        label = "Open Personal Stash",
+                        canInteract = function(entity, distance, coords, name)
+                            return distance < 1.5 and isGroupAllowed(group, type)
+                        end
+                    }
+                },
+                distance = 1.5
+            })
+        elseif Config.UseTarget == "interact" then
+            exports.interact:AddInteraction({
+                coords = vector3(coords.x, coords.y, coords.z),
+                distance = 8.0,
+                interactDst = 1.5,
+                id = group .. 'personalstash_',
+                name = 'personalstash',
+                groups = {
+                    [group] = 0, -- ضبط المجموعة المطلوبة هنا
+                },
+                options = {
+                    {
+                        label = 'Open Personal Stash',
+                        action = function(entity, coords, args)
+                            if isGroupAllowed(group, type) then
+                                local playerData = QBCore.Functions.GetPlayerData()
+                                local stashName = "personalstash_" .. playerData.citizenid
+                                TriggerEvent("inventory:client:SetCurrentStash", stashName)
+                                TriggerServerEvent("inventory:server:OpenInventory", "stash", stashName, {
+                                    maxweight = 500000,
+                                    slots = 10,
+                                })
+                            end
+                        end,
+                    },
+                }
+            })
         end
     end
 elseif Config.UseInventory == "new" then
@@ -315,30 +316,32 @@ elseif Config.UseInventory == "new" then
                 },
                 distance = 1.5
             })
-        elseif Config.UseTarget == "orbit" then
-            Citizen.CreateThread(function()
-                while true do
-                    local playerCoords = GetEntityCoords(PlayerPedId())
-                    local distance = GetDistanceBetweenCoords(playerCoords, coords.x, coords.y, coords.z, true)
-                    if distance < 8 then
-                        SetDrawOrigin(coords.x, coords.y, coords.z + 1, 0)
-                        if distance > 1.5 and distance < 8 and isGroupAllowed(group, type) then
-                            DrawSprite("orbit_ui", "point", 0, 0, 0.015, 0.025, 0, 255, 255, 255, 200)
-                        elseif distance < 1.5 and isGroupAllowed(group, type) then 
-                            DrawSprite("orbit_ui", "key", 0, 0, 0.018, 0.030, 0, 255, 255, 255, 255)
-                            DrawSprite("orbit_ui", "personalstash", 0.044, 0, 0.06, 0.028, 0, 255, 255, 255, 255)
-                            if IsControlJustPressed(0, 38) then   
+        elseif Config.UseTarget == "interact" then
+            exports.interact:AddInteraction({
+                coords = vector3(coords.x, coords.y, coords.z),
+                distance = 8.0,
+                interactDst = 1.5,
+                id = group .. 'personalstash_',
+                name = 'personalstash',
+                groups = {
+                    [group] = 0, -- ضبط المجموعة المطلوبة هنا
+                },
+                options = {
+                    {
+                        label = 'Open Personal Stash',
+                        action = function(entity, coords, args)
+                            if isGroupAllowed(group, type) then
                                 TriggerServerEvent('qb-groups:server:personalStash')
                             end
-                        end
-                        ClearDrawOrigin()
-                    end
-                    Wait(1)
-                end
-            end)
+                        end,
+                    },
+                }
+            })
         end
     end
 end
+
+
 
 -- Function to add Clothing Menu Zone
 local function addClothingMenuZone(group, coords, type)
@@ -380,27 +383,27 @@ local function addClothingMenuZone(group, coords, type)
             },
             distance = 1.5
         })
-    elseif Config.UseTarget == "orbit" then
-        Citizen.CreateThread(function()
-            while true do
-                local playerCoords = GetEntityCoords(PlayerPedId())
-                local distance = GetDistanceBetweenCoords(playerCoords, coords.x, coords.y, coords.z, true)
-                if distance < 8 then
-                    SetDrawOrigin(coords.x, coords.y, coords.z + 1, 0)
-                    if distance > 1.5 and distance < 8 and isGroupAllowed(group, type) then
-                        DrawSprite("orbit_ui", "point", 0, 0, 0.015, 0.025, 0, 255, 255, 255, 200)
-                    elseif distance < 1.5 and isGroupAllowed(group, type) then 
-                        DrawSprite("orbit_ui", "key", 0, 0, 0.018, 0.030, 0, 255, 255, 255, 255)
-                        DrawSprite("orbit_ui", "outfitmenu", 0.044, 0, 0.06, 0.028, 0, 255, 255, 255, 255)
-                        if IsControlJustPressed(0, 38) then   
+    elseif Config.UseTarget == "interact" then
+        exports.interact:AddInteraction({
+            coords = vector3(coords.x, coords.y, coords.z),
+            distance = 8.0,
+            interactDst = 1.5,
+            id = group .. '_clothing_menu',
+            name = '_clothing_menu',
+            groups = {
+                [group] = 0, -- ضبط المجموعة المطلوبة هنا
+            },
+            options = {
+                {
+                    label = 'Open Outfit Menu',
+                    action = function(entity, coords, args)
+                        if isGroupAllowed(group, type) then
                             TriggerEvent('qb-clothing:client:openOutfitMenu')
                         end
-                    end
-                    ClearDrawOrigin()
-                end
-                Wait(0)
-            end
-        end)
+                    end,
+                },
+            }
+        })
     end
 end
 
@@ -445,29 +448,29 @@ if Config.UseInventory == "old" then
                 },
                 distance = 1.5
             })
-        elseif Config.UseTarget == "orbit" then
-            Citizen.CreateThread(function()
-                while true do
-                    local playerCoords = GetEntityCoords(PlayerPedId())
-                    local distance = GetDistanceBetweenCoords(playerCoords, coords.x, coords.y, coords.z, true)
-                    if distance < 8 then
-                        SetDrawOrigin(coords.x, coords.y, coords.z + 1, 0)
-                        if distance > 1.5 and distance < 8 and isGroupAllowed(group, type) then
-                            DrawSprite("orbit_ui", "point", 0, 0, 0.015, 0.025, 0, 255, 255, 255, 200)
-                        elseif distance < 1.5 and isGroupAllowed(group, type) then 
-                            DrawSprite("orbit_ui", "key", 0, 0, 0.018, 0.030, 0, 255, 255, 255, 255)
-                            DrawSprite("orbit_ui", "openstash", 0.044, 0, 0.06, 0.028, 0, 255, 255, 255, 255)
-                            if IsControlJustPressed(0, 38) then   
+        elseif Config.UseTarget == "interact" then
+            exports.interact:AddInteraction({
+                coords = vector3(coords.x, coords.y, coords.z),
+                distance = 8.0,
+                interactDst = 1.5,
+                id = group .. '_stash',
+                name = '_stash',
+                groups = {
+                    [group] = 0, -- ضبط المجموعة المطلوبة هنا
+                },
+                options = {
+                    {
+                        label = 'Open Stash',
+                        action = function(entity, coords, args)
+                            if isGroupAllowed(group, type) then
                                 TriggerEvent('qb-groups:client:Stash')
                             end
-                        end
-                        ClearDrawOrigin()
-                    end
-                    Wait(1)
-                end
-            end)
-        end
+                        end,
+                    },
+                }
+            })
     end
+end
 elseif Config.UseInventory == "new" then
     function addStashZone(group, coords, type)
         if Config.UseTarget == "ox" then
@@ -508,27 +511,27 @@ elseif Config.UseInventory == "new" then
                 },
                 distance = 1.5
             })
-        elseif Config.UseTarget == "orbit" then
-            Citizen.CreateThread(function()
-                while true do
-                    local playerCoords = GetEntityCoords(PlayerPedId())
-                    local distance = GetDistanceBetweenCoords(playerCoords, coords.x, coords.y, coords.z, true)
-                    if distance < 8 then
-                        SetDrawOrigin(coords.x, coords.y, coords.z + 1, 0)
-                        if distance > 1.5 and distance < 8 and isGroupAllowed(group, type) then
-                            DrawSprite("orbit_ui", "point", 0, 0, 0.015, 0.025, 0, 255, 255, 255, 200)
-                        elseif distance < 1.5 and isGroupAllowed(group, type) then 
-                            DrawSprite("orbit_ui", "key", 0, 0, 0.018, 0.030, 0, 255, 255, 255, 255)
-                            DrawSprite("orbit_ui", "openstash", 0.044, 0, 0.06, 0.028, 0, 255, 255, 255, 255)
-                            if IsControlJustPressed(0, 38) then   
+        elseif Config.UseTarget == "interact" then
+            exports.interact:AddInteraction({
+                coords = vector3(coords.x, coords.y, coords.z),
+                distance = 8.0,
+                interactDst = 1.5,
+                id = group .. '_stash',
+                name = '_stash',
+                groups = {
+                    [group] = 0, -- ضبط المجموعة المطلوبة هنا
+                },
+                options = {
+                    {
+                        label = 'Open Stash',
+                        action = function(entity, coords, args)
+                            if isGroupAllowed(group, type) then
                                 TriggerServerEvent('qb-groups:server:stash')
                             end
-                        end
-                        ClearDrawOrigin()
-                    end
-                    Wait(1)
-                end
-            end)
+                        end,
+                    },
+                }
+            })
         end
     end
 end
@@ -584,30 +587,29 @@ local function addVehicleMenuZone(group, coords, type, vehicles, spawnCoords, np
             },
             distance = 1.5
         })
-    elseif Config.UseTarget == "orbit" then
-        Citizen.CreateThread(function()
-            while true do
-                local playerCoords = GetEntityCoords(PlayerPedId())
-                local distance = GetDistanceBetweenCoords(playerCoords, coords.x, coords.y, coords.z, true)
-                if distance < 8 then
-                    SetDrawOrigin(coords.x, coords.y, coords.z + 1, 0)
-                    if distance > 1.5 and distance < 8 and isGroupAllowed(group, type) then
-                        DrawSprite("orbit_ui", "point", 0, 0, 0.015, 0.025, 0, 255, 255, 255, 200)
-                    elseif distance < 1.5 and isGroupAllowed(group, type) then 
-                        DrawSprite("orbit_ui", "key", 0, 0, 0.018, 0.030, 0, 255, 255, 255, 255)
-                        DrawSprite("orbit_ui", "npc_talk", 0.044, 0, 0.06, 0.028, 0, 255, 255, 255, 255)
-                        if IsControlJustPressed(0, 38) then   
+    elseif Config.UseTarget == "interact" then
+        exports.interact:AddInteraction({
+            coords = vector3(coords.x, coords.y, coords.z),
+            distance = 8.0,
+            interactDst = 1.5,
+            id = group .. '_stash',
+            name = '_stash',
+            groups = {
+                [group] = 0, -- ضبط المجموعة المطلوبة هنا
+            },
+            options = {
+                {
+                    label = 'Open Vehicle Menu',
+                    action = function(entity, coords, args)
+                        if isGroupAllowed(group, type) then
                             TriggerEvent('code-vehicle:client:openVehicleMenu', vehicles, spawnCoords)
                         end
-                    end
-                    ClearDrawOrigin()
-                end
-                Wait(0)
-            end
-        end)
+                    end,
+                },
+            }
+        })
     end
 
-    -- إنشاء منطقة حذف المركبات
     Citizen.CreateThread(function()
         local textShowing = false
         while true do
@@ -616,7 +618,7 @@ local function addVehicleMenuZone(group, coords, type, vehicles, spawnCoords, np
             if distance < 10 then
                 if distance < 2.0 then
                     if not textShowing then
-                        exports["qb-core"]:DrawText("Return Vehicle", "E")
+                        exports[Config.QbCoreScriptName]:DrawText("Return Vehicle", "E")
                         textShowing = true
                     end
                     if IsControlJustPressed(0, 38) then
@@ -624,22 +626,24 @@ local function addVehicleMenuZone(group, coords, type, vehicles, spawnCoords, np
                         if vehicle ~= 0 then
                             QBCore.Functions.DeleteVehicle(vehicle)
                             QBCore.Functions.Notify("Vehicle Returned", "success")
-                            exports["qb-core"]:HideText()
+                            exports[Config.QbCoreScriptName]:HideText()
                             textShowing = false
                         end
                     end
                 elseif textShowing then
-                    exports["qb-core"]:HideText()
+                    exports[Config.QbCoreScriptName]:HideText()
                     textShowing = false
                 end
             elseif textShowing then
-                exports["qb-core"]:HideText()
+                exports[Config.QbCoreScriptName]:HideText()
                 textShowing = false
             end
             Wait(0)
         end
     end)
 end
+
+
 
 RegisterNetEvent('code-vehicle:client:openVehicleMenu')
 AddEventHandler('code-vehicle:client:openVehicleMenu', function(vehicles, spawnCoords)
@@ -662,12 +666,13 @@ AddEventHandler('code-vehicle:client:openVehicleMenu', function(vehicles, spawnC
         header = "Close",
         txt = "",
         params = {
-            event = 'qb-menu:client:closeMenu'
+            event = Config.MenuScriptName .. ':client:closeMenu'
         }
     })
 
-    exports['qb-menu']:openMenu(menuOptions)
+    exports[Config.MenuScriptName]:openMenu(menuOptions)
 end)
+
 
 RegisterNetEvent('code-vehicle:client:spawnVehicle')
 AddEventHandler('code-vehicle:client:spawnVehicle', function(data)
@@ -679,31 +684,53 @@ AddEventHandler('code-vehicle:client:spawnVehicle', function(data)
         SetEntityHeading(spawnedVehicle, spawnCoords.w)
         TaskWarpPedIntoVehicle(PlayerPedId(), spawnedVehicle, -1)
         TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(spawnedVehicle))
-        exports['qb-menu']:closeMenu() -- إغلاق القائمة بعد رسبون المركبة
+        exports[Config.MenuScriptName]:closeMenu() -- إغلاق القائمة بعد رسبون المركبة
     end, spawnCoords, true)
 end)
 
 
 RegisterNetEvent("qb-groups:client:Stash", function()
     local playerData = QBCore.Functions.GetPlayerData()
-    local PlayerGroup = playerData.gang.name or playerData.job.name
-    local PlayerType = playerData.gang.name and 'gang' or 'job'
+    local playerCoords = GetEntityCoords(PlayerPedId())
+    local nearbyStash
+    if playerData.gang.name and Config.Stashes[playerData.gang.name] then
+        local gangStash = Config.Stashes[playerData.gang.name]
+        local gangDistance = #(playerCoords - gangStash.coords)
+        if gangDistance < 5.0 then
+            nearbyStash = {
+                stashName = gangStash.stashName or (playerData.gang.name .. "stash"),
+                maxweight = gangStash.maxweight or 4000000,
+                slots = gangStash.slots or 500,
+                type = "gang"
+            }
+        end
+    end
 
-    if PlayerGroup and Config.Stashes[PlayerGroup] then
-        local stashConfig = Config.Stashes[PlayerGroup]
-        local stashName = stashConfig.stashName or (PlayerGroup .. "stash")
-        local maxweight = stashConfig.maxweight or 4000000
-        local slots = stashConfig.slots or 500
+    if playerData.job.name and Config.Stashes[playerData.job.name] then
+        local jobStash = Config.Stashes[playerData.job.name]
+        local jobDistance = #(playerCoords - jobStash.coords)
+        if jobDistance < 5.0 then
+            nearbyStash = {
+                stashName = jobStash.stashName or (playerData.job.name .. "stash"),
+                maxweight = jobStash.maxweight or 4000000,
+                slots = jobStash.slots or 500,
+                type = "job"
+            }
+        end
+    end
 
-        TriggerServerEvent("inventory:server:OpenInventory", "stash", stashName, {
-            maxweight = maxweight,
-            slots = slots,
+    -- افتح الخزنة إذا تم العثور على خزنة قريبة
+    if nearbyStash then
+        TriggerServerEvent("inventory:server:OpenInventory", "stash", nearbyStash.stashName, {
+            maxweight = nearbyStash.maxweight,
+            slots = nearbyStash.slots,
         })
-        TriggerEvent("inventory:client:SetCurrentStash", stashName)
+        TriggerEvent("inventory:client:SetCurrentStash", nearbyStash.stashName)
     else
-        QBCore.Functions.Notify('You are not part of a gang or job, or stash is not configured', 'error')
+        QBCore.Functions.Notify('You are not near any stash location', 'error')
     end
 end)
+
 
 
 Citizen.CreateThread(function()
