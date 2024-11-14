@@ -6,7 +6,9 @@
 The groups system has been updated to support the interact feature, along with adding easy options in the Config file to specify the names of scripts used, making modifications more straightforward.
 
 Config.inventoryScriptName = 'qb-inventory' -- اسم سكربت الحقيبة | your qb-inventory script name
+
 Config.MenuScriptName = 'qb-menu' -- اسم سكربت القائمة | your qb-menu script name
+
 Config.QbCoreScriptName = 'qb-core' -- اسم سكربت QbCore | your qb-core script name
 تم كذلك حل المشاكل المتعلقة بالمركبات والحقائب للعصابات والوظائف.
 
