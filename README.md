@@ -1,9 +1,6 @@
-https://youtu.be/Yaf5HlOeF6k
+![Screenshot 2024-05-31 174007](https://github.com/amwarss/qb-gang/assets/89148697/84804950-4ef7-47b9-809b-02496db96504)
 
-https://discord.gg/xG9FM2VjjY
-
-![ima2ge](https://github.com/amwarss/qb-gangs/assets/89148697/d3ffd919-1610-4037-9d95-56dfdb4b7e1e)
-
+-- https://discord.gg/xG9FM2VjjY
 
 "# qb-gang" 
 نظام عصابات متكامل 
@@ -21,14 +18,6 @@ https://discord.gg/xG9FM2VjjY
 خامسا يمكنك اضافة خزنه تبديل ملابس للعصابات وكل هذي المميزات لا داعي للتعديل على الكلاينت يتم التعديل عن طريق الكونفق
 
 يتوافق مع نظامين ox_target and qb-target
-
-الجديد ببمكانك تنزيله من Releases 
-
-بمكانك اضافه مكان لا اخد المركبات 
-
-واصبحت بمكانك اسخدامه للوظائف والعصابات
-
-ويعمل مع الحقيبة بالاصدارات الحديثة
 
 
 Comprehensive Gang System Script
@@ -48,11 +37,3 @@ Clothing Exchange Storage: You can add a clothing exchange storage for gangs.
 All these features can be configured via the config file without needing to modify the client.
 
 This is compatible with both ox_target and qb-target systems.
-
-What's new is where you download it from the releases 
-
-In your place, add it, not take the vehicle 
-
-You can now use it for jobs and gangs
-
-To be able to purchase the latest version
